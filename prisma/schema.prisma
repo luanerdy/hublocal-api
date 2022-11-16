@@ -57,3 +57,18 @@ model Tickets {
   local   Locais    @relation(fields: [localId], references: [id])
   localId    Int
 }
+
+model Users {
+  id    Int   @id   @default(autoincrement())
+  nome    String
+  email   String
+  senha   String
+  session   Sessions?
+}
+
+model Sessions {
+  id    Int   @id   @default(autoincrement())
+  user   Users    @relation(fields: [userId], references: [id])
+  userId    Int   @unique
+  token   String
+}
