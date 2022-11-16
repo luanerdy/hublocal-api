@@ -1,0 +1,59 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model Responsaveis {
+  id    Int   @id   @default(autoincrement())
+  nome    String
+  telefone    String
+  endereco    String
+  empresas    Empresas[]    @relation("ResponsaveisEmpresas")
+  empresasPrincipais   Empresas[]    @relation("PrincipalResponsaveisEmpresas")
+  locais Locais[]   @relation("ResponsaveisLocais")
+  locaisPrincipais   Locais[]    @relation("PrincipalResponsaveisLocais")
+  ticketsCriados    Tickets[]   @relation("CriadorResponsaveisTickets")
+  ticketsAtendidos    Tickets[]   @relation("AtendedorResponsaveisTickets")
+}
+
+model Empresas {
+  id    Int   @id   @default(autoincrement())
+  nome    String
+  cnpj    String
+  descricao   String
+  responsaveis    Responsaveis[]    @relation("ResponsaveisEmpresas")
+  responsavel   Responsaveis    @relation("PrincipalResponsaveisEmpresas", fields: [responsavelPrincipal], references: [id])
+  responsavelPrincipal    Int
+  locais    Locais[]
+}
+
+model Locais {
+  id    Int   @id   @default(autoincrement())
+  nome    String
+  endereco    String
+  tickets   Tickets[]
+  responsaveis    Responsaveis[]    @relation("ResponsaveisLocais")
+  responsavel   Responsaveis    @relation("PrincipalResponsaveisLocais", fields: [responsavelPrincipal], references: [id])
+  responsavelPrincipal    Int
+  empresa   Empresas    @relation(fields: [empresaId], references: [id])
+  empresaId   Int
+}
+
+model Tickets {
+  id    Int   @id   @default(autoincrement())
+  titulo    String
+  criadoEm    DateTime    @default(now())
+  atualizadoEm    DateTime    @default(now())
+  status    String
+  endereco    String
+  criador   Responsaveis    @relation("CriadorResponsaveisTickets", fields: [criadoPor], references: [id])
+  criadoPor    Int
+  atendedor   Responsaveis    @relation("AtendedorResponsaveisTickets", fields: [atendidoPor], references: [id])
+  atendidoPor    Int
+  local   Locais    @relation(fields: [localId], references: [id])
+  localId    Int
+}
