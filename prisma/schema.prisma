@@ -46,8 +46,8 @@ model Locais {
 model Tickets {
   id    Int   @id   @default(autoincrement())
   titulo    String
-  criadoEm    DateTime    @default(now())
-  atualizadoEm    DateTime    @default(now())
+  criadoEm    DateTime?    @default(now())    @ignore
+  atualizadoEm    DateTime?    @updatedAt    @ignore
   status    String
   endereco    String
   criador   Responsaveis    @relation("CriadorResponsaveisTickets", fields: [criadoPor], references: [id])
@@ -61,7 +61,7 @@ model Tickets {
 model Users {
   id    Int   @id   @default(autoincrement())
   nome    String
-  email   String
+  email   String    @unique
   senha   String
   session   Sessions?
 }

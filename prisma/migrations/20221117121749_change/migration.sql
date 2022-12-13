@@ -1,0 +1,4 @@
+-- AlterTable
+ALTER TABLE "Tickets" ALTER COLUMN "criadoEm" DROP NOT NULL,
+ALTER COLUMN "atualizadoEm" DROP NOT NULL,
+ALTER COLUMN "atualizadoEm" DROP DEFAULT;
