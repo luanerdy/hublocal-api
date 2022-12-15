@@ -3,6 +3,7 @@ import { PrismaService } from 'src/prisma.service';
 import { Prisma, Users } from '@prisma/client';
 import * as bcrypt from 'bcrypt';
 import * as jwt from 'jsonwebtoken';
+import { errorMessage } from 'src/utils';
 
 @Injectable()
 export class AuthService {
@@ -18,13 +19,10 @@ export class AuthService {
       });
 
       delete result.senha;
-      delete result.id;
 
       return result;
     } catch (err) {
-      return {
-        error: 'Email já cadastrado!',
-      };
+      return errorMessage('Email já cadastrado!');
     }
   }
 
@@ -73,9 +71,7 @@ export class AuthService {
   }
 
   async entrar(data: Partial<Users>) {
-    const incorrectData = {
-      error: 'Dados incorretos!',
-    };
+    const incorrectData = errorMessage('Dados incorretos!');
 
     try {
       const user = await this.prisma.users.findUnique({
@@ -96,7 +92,6 @@ export class AuthService {
         token,
       };
     } catch (err) {
-      console.log(err);
       return incorrectData;
     }
   }
@@ -119,9 +114,7 @@ export class AuthService {
         message: 'Logout efetuado com sucesso',
       };
     } catch (err) {
-      return {
-        error: 'Sessão não encontrada',
-      };
+      return errorMessage('Sessão não encontrada');
     }
   }
 }

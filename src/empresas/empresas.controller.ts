@@ -6,7 +6,10 @@ import {
   Patch,
   Param,
   Delete,
+  Res,
 } from '@nestjs/common';
+import { Prisma } from '@prisma/client';
+import { Response } from 'express';
 import { EmpresasService } from './empresas.service';
 
 @Controller('empresas')
@@ -14,8 +17,13 @@ export class EmpresasController {
   constructor(private readonly empresasService: EmpresasService) {}
 
   @Post()
-  create(@Body() createEmpresaDto: any) {
-    return this.empresasService.create(createEmpresaDto);
+  async create(
+    @Res() response: Response,
+    @Body() data: Prisma.EmpresasCreateInput,
+  ) {
+    const result = await this.empresasService.create(data);
+    const code = 'error' in result ? 409 : 201;
+    return response.status(code).send(result);
   }
 
   @Get()
