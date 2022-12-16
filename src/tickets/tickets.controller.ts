@@ -26,6 +26,17 @@ export class TicketsController {
     return response.status(code).send(result);
   }
 
+  @Patch('/status/:id')
+  async changeStatus(
+    @Res() response: Response,
+    @Param('id') id: string,
+    @Body() data: { status: string },
+  ) {
+    const result = await this.ticketsService.changeStatus(+id, data);
+    const code = 'error' in result ? 400 : 200;
+    return response.status(code).send(result);
+  }
+
   @Get()
   async findAll(@Res() response: Response) {
     const result = await this.ticketsService.findAll();

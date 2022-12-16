@@ -44,7 +44,10 @@ export class LocaisController {
   async update(
     @Res() response: Response,
     @Param('id') id: string,
-    @Body() data: Prisma.LocaisUncheckedUpdateInput,
+    @Body()
+    data: Prisma.LocaisUncheckedUpdateInput & {
+      ticket: Prisma.TicketsUncheckedUpdateInput;
+    },
   ) {
     const result = await this.locaisService.update(+id, data);
     const code = 'error' in result ? 400 : 201;

@@ -19,6 +19,21 @@ export class TicketsService {
     }
   }
 
+  async changeStatus(id: number, data: { status: string }) {
+    try {
+      const result = await this.prisma.tickets.update({
+        where: {
+          id,
+        },
+        data,
+      });
+
+      return result;
+    } catch (err) {
+      return errorMessage();
+    }
+  }
+
   async findAll() {
     try {
       const result = await this.prisma.tickets.findMany();

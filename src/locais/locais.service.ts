@@ -43,17 +43,59 @@ export class LocaisService {
     }
   }
 
-  async update(id: number, data: Prisma.LocaisUncheckedUpdateInput) {
+  async update(
+    id: number,
+    data: Prisma.LocaisUncheckedUpdateInput & {
+      ticket: Prisma.TicketsUncheckedUpdateInput;
+    },
+  ) {
     try {
-      const result = await this.prisma.locais.update({
+      const local = await this.prisma.locais.update({
         where: {
           id,
         },
-        data,
+        data: Object.fromEntries(
+          Object.entries(data).filter((e) => e[0] !== 'ticket'),
+        ),
       });
 
-      return result;
+      const prevTicket = await this.prisma.tickets.findFirst({
+        where: {
+          localId: local.id,
+          AND: {
+            NOT: {
+              status: 'concluido',
+            },
+          },
+        },
+      });
+
+      const ticket = await this.prisma.tickets.upsert({
+        create: {
+          localId: local.id,
+          localEndereco: local.endereco,
+          localNome: local.nome,
+          localEmpresa: local.empresaId,
+          localResponsavelPrincipal: local.responsavelPrincipal,
+          status: data.ticket.status,
+          titulo: data.ticket.titulo,
+          criadoPor: data.ticket.criadoPor,
+          atendidoPor: data.ticket.atendidoPor,
+        } as Prisma.TicketsUncheckedCreateInput,
+        update: {
+          localEndereco: local.endereco,
+          localNome: local.nome,
+          localEmpresa: local.empresaId,
+          localResponsavelPrincipal: local.responsavelPrincipal,
+        } as Prisma.TicketsUncheckedUpdateInput,
+        where: {
+          id: prevTicket?.id ?? 0,
+        },
+      });
+
+      return { local, ticket };
     } catch (err) {
+      console.log(err);
       return errorMessage();
     }
   }
