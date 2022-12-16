@@ -1,27 +1,74 @@
 import { Injectable } from '@nestjs/common';
+import { Prisma } from '@prisma/client';
 import { PrismaService } from 'src/prisma.service';
+import { errorMessage } from 'src/utils';
 
 @Injectable()
 export class TicketsService {
   constructor(private prisma: PrismaService) {}
 
-  create(createTicketDto: any) {
-    return 'This action adds a new ticket';
+  async create(data: Prisma.TicketsUncheckedCreateInput) {
+    try {
+      const result = await this.prisma.tickets.create({
+        data,
+      });
+
+      return result;
+    } catch (err) {
+      return errorMessage();
+    }
   }
 
-  findAll() {
-    return `This action returns all tickets`;
+  async findAll() {
+    try {
+      const result = await this.prisma.tickets.findMany();
+
+      return result;
+    } catch (err) {
+      return errorMessage();
+    }
   }
 
-  findOne(id: number) {
-    return `This action returns a #${id} ticket`;
+  async findOne(id: number) {
+    try {
+      const result = await this.prisma.tickets.findUnique({
+        where: {
+          id,
+        },
+      });
+
+      return result;
+    } catch (err) {
+      return errorMessage();
+    }
   }
 
-  update(id: number, updateTicketDto: any) {
-    return `This action updates a #${id} ticket`;
+  async update(id: number, data: Prisma.TicketsUncheckedUpdateInput) {
+    try {
+      const result = await this.prisma.tickets.update({
+        where: {
+          id,
+        },
+        data,
+      });
+
+      return result;
+    } catch (err) {
+      return errorMessage();
+    }
   }
 
-  remove(id: number) {
-    return `This action removes a #${id} ticket`;
+  async remove(id: number) {
+    try {
+      const result = await this.prisma.tickets.delete({
+        where: {
+          id,
+        },
+      });
+
+      return result;
+    } catch (err) {
+      return errorMessage();
+    }
   }
 }
