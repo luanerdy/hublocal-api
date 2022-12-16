@@ -1,7 +1,10 @@
 import { Injectable } from '@nestjs/common';
+import { PrismaService } from 'src/prisma.service';
 
 @Injectable()
 export class TicketsService {
+  constructor(private prisma: PrismaService) {}
+
   create(createTicketDto: any) {
     return 'This action adds a new ticket';
   }

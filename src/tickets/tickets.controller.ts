@@ -7,6 +7,7 @@ import {
   Param,
   Delete,
 } from '@nestjs/common';
+import { Prisma } from '@prisma/client';
 import { TicketsService } from './tickets.service';
 
 @Controller('tickets')
@@ -14,8 +15,8 @@ export class TicketsController {
   constructor(private readonly ticketsService: TicketsService) {}
 
   @Post()
-  create(@Body() createTicketDto: any) {
-    return this.ticketsService.create(createTicketDto);
+  create(@Body() data: Prisma.TicketsUncheckedCreateInput) {
+    return this.ticketsService.create(data);
   }
 
   @Get()

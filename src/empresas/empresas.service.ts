@@ -7,13 +7,22 @@ import { errorMessage } from 'src/utils';
 export class EmpresasService {
   constructor(private prisma: PrismaService) {}
 
-  async create(data: Prisma.EmpresasCreateInput) {
+  async create(data: Prisma.EmpresasUncheckedCreateInput) {
     try {
       const result = await this.prisma.empresas.create({
         data,
       });
 
-      delete result.id;
+      return result;
+    } catch (err) {
+      console.log(err);
+      return errorMessage('Não foi possível criar a empresa');
+    }
+  }
+
+  async findAll() {
+    try {
+      const result = await this.prisma.empresas.findMany();
 
       return result;
     } catch (err) {
@@ -21,19 +30,47 @@ export class EmpresasService {
     }
   }
 
-  findAll() {
-    return `This action returns all empresas`;
+  async findOne(id: number) {
+    try {
+      const result = await this.prisma.empresas.findUnique({
+        where: {
+          id,
+        },
+      });
+
+      return result;
+    } catch (err) {
+      return errorMessage();
+    }
   }
 
-  findOne(id: number) {
-    return `This action returns a #${id} empresa`;
+  async update(id: number, data: Prisma.EmpresasUncheckedUpdateInput) {
+    try {
+      const result = await this.prisma.empresas.update({
+        where: {
+          id,
+        },
+        data,
+      });
+
+      return result;
+    } catch (err) {
+      console.log(err);
+      return errorMessage();
+    }
   }
 
-  update(id: number, updateEmpresaDto: any) {
-    return `This action updates a #${id} empresa`;
-  }
+  async remove(id: number) {
+    try {
+      const result = await this.prisma.empresas.delete({
+        where: {
+          id,
+        },
+      });
 
-  remove(id: number) {
-    return `This action removes a #${id} empresa`;
+      return result;
+    } catch (err) {
+      return errorMessage();
+    }
   }
 }

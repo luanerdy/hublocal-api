@@ -6,7 +6,10 @@ import {
   Patch,
   Param,
   Delete,
+  Res,
 } from '@nestjs/common';
+import { Prisma } from '@prisma/client';
+import { Response } from 'express';
 import { LocaisService } from './locais.service';
 
 @Controller('locais')
@@ -14,27 +17,44 @@ export class LocaisController {
   constructor(private readonly locaisService: LocaisService) {}
 
   @Post()
-  create(@Body() createLocaiDto: any) {
-    return this.locaisService.create(createLocaiDto);
+  async create(
+    @Res() response: Response,
+    @Body() data: Prisma.LocaisUncheckedCreateInput,
+  ) {
+    const result = await this.locaisService.create(data);
+    const code = 'error' in result ? 409 : 201;
+    return response.status(code).send(result);
   }
 
   @Get()
-  findAll() {
-    return this.locaisService.findAll();
+  async findAll(@Res() response: Response) {
+    const result = await this.locaisService.findAll();
+    const code = 'error' in result ? 400 : 200;
+    return response.status(code).send(result);
   }
 
   @Get(':id')
-  findOne(@Param('id') id: string) {
-    return this.locaisService.findOne(+id);
+  async findOne(@Res() response: Response, @Param('id') id: string) {
+    const result = await this.locaisService.findOne(+id);
+    const code = 'error' in result ? 400 : 200;
+    return response.status(code).send(result);
   }
 
   @Patch(':id')
-  update(@Param('id') id: string, @Body() updateLocaiDto: any) {
-    return this.locaisService.update(+id, updateLocaiDto);
+  async update(
+    @Res() response: Response,
+    @Param('id') id: string,
+    @Body() data: Prisma.LocaisUncheckedUpdateInput,
+  ) {
+    const result = await this.locaisService.update(+id, data);
+    const code = 'error' in result ? 400 : 201;
+    return response.status(code).send(result);
   }
 
   @Delete(':id')
-  remove(@Param('id') id: string) {
-    return this.locaisService.remove(+id);
+  async remove(@Res() response: Response, @Param('id') id: string) {
+    const result = await this.locaisService.remove(+id);
+    const code = 'error' in result ? 400 : 201;
+    return response.status(code).send(result);
   }
 }
