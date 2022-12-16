@@ -18,6 +18,7 @@ model Responsaveis {
   locaisPrincipais   Locais[]    @relation("PrincipalResponsaveisLocais")
   ticketsCriados    Tickets[]   @relation("CriadorResponsaveisTickets")
   ticketsAtendidos    Tickets[]   @relation("AtendedorResponsaveisTickets")
+  ticketsLocaisResponsavel    Tickets[]   @relation("ResponsavelLocalResponsaveisTickets")
 }
 
 model Empresas {
@@ -29,6 +30,7 @@ model Empresas {
   responsavel   Responsaveis    @relation("PrincipalResponsaveisEmpresas", fields: [responsavelPrincipal], references: [id])
   responsavelPrincipal    Int
   locais    Locais[]
+  ticketsEmpresa    Tickets[]   @relation("EmpresaLocalEmpresasTickets")
 }
 
 model Locais {
@@ -49,11 +51,16 @@ model Tickets {
   criadoEm    DateTime?    @default(now())    @ignore
   atualizadoEm    DateTime?    @updatedAt    @ignore
   status    String
-  endereco    String
+  localNome    String
+  localEndereco    String
   criador   Responsaveis    @relation("CriadorResponsaveisTickets", fields: [criadoPor], references: [id])
   criadoPor    Int
   atendedor   Responsaveis    @relation("AtendedorResponsaveisTickets", fields: [atendidoPor], references: [id])
   atendidoPor    Int
+  responsavelLocal   Responsaveis    @relation("ResponsavelLocalResponsaveisTickets", fields: [localResponsavelPrincipal], references: [id])
+  localResponsavelPrincipal    Int
+  empresaLocal   Empresas    @relation("EmpresaLocalEmpresasTickets", fields: [localEmpresa], references: [id])
+  localEmpresa    Int
   local   Locais    @relation(fields: [localId], references: [id])
   localId    Int
 }
